@@ -1,0 +1,35 @@
+## @file
+#  EFI/Framework Open Virtual Machine Firmware (OVMF) platform
+#
+#  Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = corebootPkg
+  PACKAGE_GUID                   = 007fd4d1-911f-4c48-86b2-1d3cb2ff4e45
+  PACKAGE_VERSION                = 0.1
+
+[Guids]
+  gUefiCorebootPkgTokenSpaceGuid      = {0x7511213d, 0x9403, 0x452c, {0xb2, 0x96, 0xcb, 0x15, 0xb6, 0xbb, 0xae, 0x6a}}
+
+[PcdsFixedAtBuild]
+  gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvBase|0x0|UINT32|0
+  gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvSize|0x0|UINT32|1
+
+  ## This flag is used to control the destination port for PlatformDebugLibIoPort
+  gUefiCorebootPkgTokenSpaceGuid.PcdDebugIoPort|0x402|UINT16|4
+
+  ## This flag determines the Power Management Base Address of choice, written
+  #  to PIIX4 function 3 offset 0x40-0x43 bits [15:6].
+  gUefiCorebootPkgTokenSpaceGuid.PcdAcpiPmBaseAddress|0xB000|UINT16|5
+
