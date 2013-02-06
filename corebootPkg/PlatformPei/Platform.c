@@ -36,7 +36,6 @@
 #include <IndustryStandard/Pci22.h>
 
 #include "Platform.h"
-#include "Cmos.h"
 
 EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInformation[] = {
   { EfiACPIMemoryNVS,       0x004 },
@@ -269,27 +268,6 @@ ReserveEmuVariableNvStore (
 }
 
 
-VOID
-DebugDumpCmos (
-  VOID
-  )
-{
-  UINTN  Loop;
-
-  DEBUG ((EFI_D_INFO, "CMOS:\n"));
-
-  for (Loop = 0; Loop < 0x80; Loop++) {
-    if ((Loop % 0x10) == 0) {
-      DEBUG ((EFI_D_INFO, "%02x:", Loop));
-    }
-    DEBUG ((EFI_D_INFO, " %02x", CmosRead8 (Loop)));
-    if ((Loop % 0x10) == 0xf) {
-      DEBUG ((EFI_D_INFO, "\n"));
-    }
-  }
-}
-
-
 /**
   Perform Platform PEI initialization.
 
@@ -309,8 +287,6 @@ InitializePlatform (
   EFI_PHYSICAL_ADDRESS  TopOfMemory;
 
   DEBUG ((EFI_D_ERROR, "Platform PEIM Loaded\n"));
-
-  DebugDumpCmos ();
 
   TopOfMemory = MemDetect ();
 

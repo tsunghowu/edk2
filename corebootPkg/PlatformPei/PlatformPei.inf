@@ -29,7 +29,6 @@
 #
 
 [Sources]
-  Cmos.c
   Fv.c
   MemDetect.c
   Platform.c

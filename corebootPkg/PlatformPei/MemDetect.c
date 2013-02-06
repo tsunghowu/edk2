@@ -33,56 +33,86 @@ Module Name:
 #include <Library/MtrrLib.h>
 
 #include "Platform.h"
-#include "Cmos.h"
+#include "Coreboot.h"
 
-STATIC
-UINTN
-GetSystemMemorySizeBelow4gb (
+UINT64                      LowerMemorySize;
+UINT64                      UpperMemorySize;
+
+VOID
+ParseMemory(
+  struct cb_memory *rec
   )
 {
-  UINT8 Cmos0x34;
-  UINT8 Cmos0x35;
+  int i;
 
-  //
-  // CMOS 0x34/0x35 specifies the system memory above 16 MB.
-  // * CMOS(0x35) is the high byte
-  // * CMOS(0x34) is the low byte
-  // * The size is specified in 64kb chunks
-  // * Since this is memory above 16MB, the 16MB must be added
-  //   into the calculation to get the total memory size.
-  //
+  DEBUG ((EFI_D_ERROR, "Found memory information\n"));
+  LowerMemorySize = 0;
+  UpperMemorySize = 0;
 
-  Cmos0x34 = (UINT8) CmosRead8 (0x34);
-  Cmos0x35 = (UINT8) CmosRead8 (0x35);
-
-  return (((UINTN)((Cmos0x35 << 8) + Cmos0x34) << 16) + SIZE_16MB);
-}
-
-
-STATIC
-UINT64
-GetSystemMemorySizeAbove4gb (
-  )
-{
-  UINT32 Size;
-  UINTN  CmosIndex;
-
-  //
-  // CMOS 0x5b-0x5d specifies the system memory above 4GB MB.
-  // * CMOS(0x5d) is the most significant size byte
-  // * CMOS(0x5c) is the middle size byte
-  // * CMOS(0x5b) is the least significant size byte
-  // * The size is specified in 64kb chunks
-  //
-
-  Size = 0;
-  for (CmosIndex = 0x5d; CmosIndex >= 0x5b; CmosIndex--) {
-    Size = (UINT32) (Size << 8) + (UINT32) CmosRead8 (CmosIndex);
+  for (i=0; i< MEM_RANGE_COUNT(rec); i++) {
+    struct cb_memory_range *range = MEM_RANGE_PTR(rec, i);
+    UINT64 start, size;
+    start = cb_unpack64(range->start);
+    size = cb_unpack64(range->size);
+    DEBUG ((EFI_D_ERROR, "%d. %016lx - %016lx [%02x]\n",
+      i, start, start + size - 1, range->type));
+    if (range->type != CB_MEM_RAM)
+      continue;
+    if (start + size < 0x100000000ULL) {
+      LowerMemorySize = start + size;
+    } else {
+      UpperMemorySize = start + size - 0x100000000ULL;
+    }
   }
-
-  return LShiftU64 (Size, 16);
 }
 
+VOID
+FindTableAt (
+  VOID *addr
+  )
+{
+  struct cb_header *header;
+  unsigned char *ptr = addr;
+  int i, len=4096;
+
+  for (i = 0; i < len; i += 16, ptr += 16) {
+    header = (struct cb_header *)ptr;
+    if (header->signature == 0x4f49424c) {
+      break;
+    }
+  }
+  
+  if (i >= len)
+    return;
+
+  if (!header->table_bytes)
+    return;
+
+  DEBUG ((EFI_D_ERROR, "Found coreboot table at %p.\n", header));
+  ptr += header->header_bytes;
+  for (i = 0; i < header->table_entries; i++) {
+    struct cb_record *rec = (struct cb_record *)ptr;
+    switch (rec->tag) {
+    case CB_TAG_FORWARD:
+      FindTableAt((void *)(UINTN)((struct cb_forward *)rec)->forward);
+      return;
+    case CB_TAG_MEMORY:
+      ParseMemory((struct cb_memory *)ptr);
+      break;
+    default:
+      break;
+    }
+    ptr += rec->size;
+  }
+}
+
+VOID
+FindCorebootTable (
+  VOID
+  )
+{
+  FindTableAt((void *)0);
+}
 
 /**
   Peform Memory Detection
@@ -90,6 +120,7 @@ GetSystemMemorySizeAbove4gb (
   @return EFI_SUCCESS     The PEIM initialized successfully.
 
 **/
+
 EFI_PHYSICAL_ADDRESS
 MemDetect (
   )
@@ -97,16 +128,13 @@ MemDetect (
   EFI_STATUS                  Status;
   EFI_PHYSICAL_ADDRESS        MemoryBase;
   UINT64                      MemorySize;
-  UINT64                      LowerMemorySize;
-  UINT64                      UpperMemorySize;
 
   DEBUG ((EFI_D_ERROR, "MemDetect called\n"));
 
   //
-  // Determine total memory size available
+  // Total memory size available detected by coreboot table
   //
-  LowerMemorySize = GetSystemMemorySizeBelow4gb ();
-  UpperMemorySize = GetSystemMemorySizeAbove4gb ();
+  FindCorebootTable();
 
   //
   // Determine the range of memory to use during PEI
