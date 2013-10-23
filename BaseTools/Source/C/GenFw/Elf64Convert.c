@@ -305,7 +305,7 @@ ScanSections64 (
           // and make images smaller.  If sh_addr is not aligned to sh_addralign
           // then the section needs to preserve sh_addr MOD sh_addralign.
           // Normally doing nothing here works great.
-          Error (NULL, 0, 3000, "Invalid", "Unsupported section alignment.");
+          Error (NULL, 0, 3000, "Invalid", "Unsupported text section alignment.");
         }
       }
 
@@ -360,7 +360,11 @@ ScanSections64 (
           // and make images smaller.  If sh_addr is not aligned to sh_addralign
           // then the section needs to preserve sh_addr MOD sh_addralign.
           // Normally doing nothing here works great.
-          Error (NULL, 0, 3000, "Invalid", "Unsupported section alignment.");
+          if (shdr->sh_addr < mCoffOffset + shdr->sh_addralign) {
+            mCoffOffset = shdr->sh_addr;
+          } else {
+            Error (NULL, 0, 3000, "Invalid", "Unsupported data section alignment.");
+          }
         }
       }
       mCoffSectionsOffset[i] = mCoffOffset;
@@ -391,7 +395,7 @@ ScanSections64 (
           // and make images smaller.  If sh_addr is not aligned to sh_addralign
           // then the section needs to preserve sh_addr MOD sh_addralign.
           // Normally doing nothing here works great.
-          Error (NULL, 0, 3000, "Invalid", "Unsupported section alignment.");
+          Error (NULL, 0, 3000, "Invalid", "Unsupported resource section alignment.");
         }
       }
       if (shdr->sh_size != 0) {
