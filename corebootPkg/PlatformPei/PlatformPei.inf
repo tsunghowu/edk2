@@ -70,3 +70,6 @@
 [Depex]
   TRUE
 
+[BuildOptions]
+  MSFT:*_VS2008_X64_CC_FLAGS = /wd4200 /wd4018 /wd4701 /Dinline=_inline
+

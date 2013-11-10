@@ -36,6 +36,7 @@
 
 [Sources.X64]
   X64/SecEntry.S    | GCC
+  X64/SecEntry.asm  | MSFT
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -62,3 +63,7 @@
 [Pcd]
   gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvBase
   gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvSize
+
+[BuildOptions]
+  MSFT:*_VS2008_X64_DLINK_FLAGS = /align:4096 /filealign:4096
+
