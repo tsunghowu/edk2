@@ -16,15 +16,15 @@
 ################################################################################
 [FD.coreboot]
 BaseAddress   = 0x800000|gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvBase
-Size          = 0x600000|gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvSize
+Size          = 0x700000|gUefiCorebootPkgTokenSpaceGuid.PcdCorebootMemFvSize
 ErasePolarity = 1
 BlockSize     = 0x1000
-NumBlocks     = 0x600
+NumBlocks     = 0x700
 
-0x00000000|0x014000
+0x00000000|0x015000
 FV = SECFV
 
-0x00014000|0x5ec000
+0x00015000|0x600000
 FV = MAINFV
 
 ################################################################################
