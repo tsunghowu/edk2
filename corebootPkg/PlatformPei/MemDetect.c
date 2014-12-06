@@ -24,6 +24,7 @@ Module Name:
 //
 // The Library classes this module consumes
 //
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
@@ -37,6 +38,8 @@ Module Name:
 
 UINT64                      LowerMemorySize;
 UINT64                      UpperMemorySize;
+
+extern const EFI_GUID gUefiCorebootPkgFramebufferHob;
 
 VOID
 ParseMemory(
@@ -99,6 +102,12 @@ FindTableAt (
     case CB_TAG_MEMORY:
       ParseMemory((struct cb_memory *)ptr);
       break;
+    case CB_TAG_FRAMEBUFFER: {
+      void *addr = BuildGuidHob(&gUefiCorebootPkgFramebufferHob, sizeof(struct cb_framebuffer));
+      if (addr) {
+        CopyMem(addr, ptr, sizeof(struct cb_framebuffer));
+      }
+    }
     default:
       break;
     }
