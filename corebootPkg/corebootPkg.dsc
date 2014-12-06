@@ -450,6 +450,11 @@
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 
+  corebootPkg/corebootFbDxe/corebootFbDxe.inf {
+    <LibraryClasses>
+      BltLib|OptionRomPkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
+  }
+
   #
   # ISA Support
   #

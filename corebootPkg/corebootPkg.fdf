@@ -268,6 +268,8 @@ INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 INF  RuleOverride=CSM corebootPkg/Csm/Csm16/Csm16.inf
 !endif
 
+INF  corebootPkg/corebootFbDxe/corebootFbDxe.inf
+
 ################################################################################
 
 [Rule.Common.SEC]
