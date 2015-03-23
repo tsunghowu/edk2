@@ -254,6 +254,17 @@ FindFfsFileAndSection (
   }
 }
 
+EFI_STATUS
+EFIAPI
+_ModuleEntryPoint (
+  IN EFI_PEI_FILE_HANDLE       FileHandle,
+  IN CONST EFI_PEI_SERVICES    **PeiServices
+  ) 
+{
+	return EFI_SUCCESS;
+}
+
+
 /**
   Locates the PEI Core entry point address
 

@@ -219,9 +219,10 @@ corebootFbGraphicsOutputConstructor (
   Private->GraphicsOutput.Mode->FrameBufferSize = Private->fbinfo.x_resolution * Private->fbinfo.y_resolution * (Private->fbinfo.bits_per_pixel / 8);
   Private->GraphicsOutput.Mode->MaxMode = 1;
   Private->GraphicsOutput.Mode->Mode    = 0;
+  {
   UINTN tmp;
   corebootFbGraphicsOutputQueryMode(GraphicsOutput, 0, &tmp, &Private->GraphicsOutput.Mode->Info);
-
+  }
   BltLibConfigure (
     (VOID*)(UINTN) Private->GraphicsOutput.Mode->FrameBufferBase,
     Private->GraphicsOutput.Mode->Info

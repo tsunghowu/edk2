@@ -15,6 +15,10 @@
 #ifndef _COREBOOT_PEI_H_INCLUDED_
 #define _COREBOOT_PEI_H_INCLUDED_
 
+#pragma warning( disable : 4200 )
+
+#pragma warning( disable : 4431 )
+
 struct cbuint64 {
   UINT32 lo;
   UINT32 hi;
@@ -154,23 +158,6 @@ struct cb_cbmem_tab {
   UINT32 size;
   UINT64 cbmem_tab;
 };
-
-/* Helpful inlines */
-
-static inline UINT64 cb_unpack64(struct cbuint64 val)
-{
-  return (((UINT64) val.hi) << 32) | val.lo;
-}
-
-static inline const char *cb_mb_vendor_string(const struct cb_mainboard *cbm)
-{
-  return (char *)(cbm->strings + cbm->vendor_idx);
-}
-
-static inline const char *cb_mb_part_string(const struct cb_mainboard *cbm)
-{
-  return (char *)(cbm->strings + cbm->part_number_idx);
-}
 
 /* Helpful macros */
 

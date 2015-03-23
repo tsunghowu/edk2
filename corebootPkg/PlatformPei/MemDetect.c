@@ -41,12 +41,30 @@ UINT64                      UpperMemorySize;
 
 extern const EFI_GUID gUefiCorebootPkgFramebufferHob;
 
+/* Helpful inlines */
+
+static UINT64 cb_unpack64(struct cbuint64 val)
+{
+  return (((UINT64) val.hi) << 32) | val.lo;
+}
+
+static const char *cb_mb_vendor_string(const struct cb_mainboard *cbm)
+{
+  return (char *)(cbm->strings + cbm->vendor_idx);
+}
+
+static const char *cb_mb_part_string(const struct cb_mainboard *cbm)
+{
+  return (char *)(cbm->strings + cbm->part_number_idx);
+}
+
+
 VOID
 ParseMemory(
   struct cb_memory *rec
   )
 {
-  int i;
+  unsigned int i;
 
   DEBUG ((EFI_D_ERROR, "Found memory information\n"));
   LowerMemorySize = 0;
@@ -76,7 +94,7 @@ FindTableAt (
 {
   struct cb_header *header;
   unsigned char *ptr = addr;
-  int i, len=4096;
+  unsigned int i, len=4096;
 
   for (i = 0; i < len; i += 16, ptr += 16) {
     header = (struct cb_header *)ptr;

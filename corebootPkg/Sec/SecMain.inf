@@ -36,7 +36,7 @@
 
 [Sources.X64]
   X64/SecEntry.S    | GCC
-  X64/SecEntry.asm  | MSFT
+#<CHW+>  X64/SecEntry.asm  | MSFT
 
 [Packages]
   MdePkg/MdePkg.dec
