@@ -361,7 +361,7 @@ ScanSections64 (
           // then the section needs to preserve sh_addr MOD sh_addralign.
           // Normally doing nothing here works great.
           if (shdr->sh_addr < mCoffOffset + shdr->sh_addralign) {
-            mCoffOffset = shdr->sh_addr;
+            mCoffOffset = (UINT32)shdr->sh_addr;
           } else {
             Error (NULL, 0, 3000, "Invalid", "Unsupported data section alignment.");
           }
